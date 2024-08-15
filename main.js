@@ -2,7 +2,7 @@ const result = document.getElementById("result")
 const resultTodos = document.getElementById("resultTodos")
 const pagination = document.getElementById("pagination")
 const photo = document.getElementById("photo")
-
+let photos = []
 let currentPage = 1
 let recordsPerPage = 10
 let totalPages
@@ -21,8 +21,14 @@ async function getUsers() {
 
 
 async function getPhotos() {
-    const response = await fetch("https://jsonplaceholder.typicode.com/photos")
-    const photos__id = await response.json()
+    try{
+        const response = await fetch("https://jsonplaceholder.typicode.com/photos?_page=1&_limit=5")
+        photos = await response.json()
+        displayPhoto()
+    }catch (error) {
+        console.log(error);
+        
+    }
 }
 
 async function getTodos() {
@@ -54,9 +60,7 @@ function displayUser(users) {
     });
 }
 
-function displayPhotos(params) {
-    
-}
+
 
 function displayPage(todos, page) {
     resultTodos.innerHTML = ""
@@ -67,12 +71,33 @@ function displayPage(todos, page) {
 
     paginatedTodos.forEach((val, ind) => {
         let tr = document.createElement("tr")
-        tr.innerHTML = `
+        tr.innerHTML = `    
             <td>${val.id}</td>
             <td>${val.title}</td>
             <td>${val.completed ? "Yes" : "No"}</td>
         `
         resultTodos.appendChild(tr)
+    })
+}
+
+
+function displayPhoto() {
+    photo.innerHTML = ""
+    photos.forEach(item => {
+        let col = document.createElement("div")
+        col.className = "col-md-4 my-2 d-flex flex-row"
+        col.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <img src="${item.url}" alt="${item.title}" class="w-100 h-100"/>
+                </div>
+                <div class="card-footer">
+                    <p class="${item.id} fs-3"></p>
+                    <p class="${item.title} fs-3"></p>
+                </div>
+            </div>
+        `
+        photo.appendChild(col)
     })
 }
 
